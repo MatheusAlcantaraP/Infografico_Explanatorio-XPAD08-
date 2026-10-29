@@ -55,36 +55,47 @@ def br(v, nd=1):
 
 
 # ---------------------------------------------------------------- estilo
-SURF, INK, INK2, MUTED = "#fcfcfb", "#0b0b0b", "#52514e", "#898781"
+SURF, INK, INK2, MUTED = "#fcfcfb", "#0b0b0b", "#52514e", "#706f69"
 GRID, BASE, PANEL = "#e1e0d9", "#c3c2b7", "#f1f0ec"
 BLUE, BLUE_L = "#2a78d6", "#86b6ef"
 NAVY, BLUE_D, BLUE_100 = "#0d366b", "#1c5cab", "#cde2fb"
 
-W, H = 10.0, 26.4
+W, H = 10.0, 26.15
 fig = plt.figure(figsize=(W, H), facecolor=SURF)
 bg = fig.add_axes([0, 0, 1, 1])
 bg.set_xlim(0, W)
 bg.set_ylim(H, 0)  # 1 unidade = 1 polegada, y cresce para baixo
 bg.axis("off")
+CONTENT_SHIFT = 0.0
 
 
 def T(x, y, s, size=11, color=INK, weight="normal", ha="left", va="top",
       wrap=None, ls=1.3):
     if wrap:
         s = "\n".join(textwrap.fill(p, wrap) for p in s.split("\n"))
-    bg.text(x, y, s, fontsize=size, color=color, fontweight=weight, ha=ha,
+    bg.text(x, y - CONTENT_SHIFT, s, fontsize=size, color=color, fontweight=weight, ha=ha,
             va=va, linespacing=ls)
     return y + (s.count("\n") + 1) * size * ls / 72
 
 
+def add_content_patch(patch):
+    if isinstance(patch, Circle):
+        x, y = patch.center
+        patch.set_center((x, y - CONTENT_SHIFT))
+    else:
+        patch.set_y(patch.get_y() - CONTENT_SHIFT)
+    bg.add_patch(patch)
+
+
 def AX(x, y, w, h):
+    y -= CONTENT_SHIFT
     a = fig.add_axes([x / W, 1 - (y + h) / H, w / W, h / H])
     a.set_facecolor(SURF)
     return a
 
 
 def badge(x, y, n, color=BLUE):
-    bg.add_patch(Circle((x, y), 0.2, color=color))
+    add_content_patch(Circle((x, y), 0.2, color=color))
     T(x, y, str(n), size=13, color="white", weight="bold", ha="center",
       va="center")
 
@@ -103,18 +114,18 @@ def style_barh(a, xmax, ticks):
 
 
 # ---------------------------------------------------------------- cabeçalho
-bg.add_patch(Rectangle((0, 0), W, 3.7, color=NAVY))
-T(0.6, 0.5, "PARA ESTUDANTES DE GRADUAÇÃO DA UNIFEI  ·  INICIAÇÃO CIENTÍFICA E TECNOLÓGICA",
-  size=9.5, color=BLUE_L, weight="bold")
-y = T(0.6, 0.95,
-      "Na UFES, 47% dos bolsistas de iniciação científica entraram no "
-      "mestrado. Sem IC, menos de 10%.",
-      size=29, color="white", weight="bold", wrap=35, ls=1.18)
-T(0.6, y + 0.18,
+bg.add_patch(Rectangle((0, 0), W, 2.2, color=NAVY))
+y = T(0.6, 0.4,
+      "Na UFES, 47% dos bolsistas de IC entraram no mestrado. "
+      "Sem IC, menos de 10%.",
+      size=23, color="white", weight="bold", wrap=50, ls=1.18)
+T(0.6, y + 0.12,
   "Iniciação científica e tecnológica é a porta de entrada para a pesquisa e "
   "a inovação durante a graduação. Na UNIFEI, o primeiro passo é procurar um "
   "orientador.",
-  size=12.5, color=BLUE_100, wrap=90, ls=1.35)
+  size=14, color=BLUE_100, wrap=80, ls=1.3)
+
+CONTENT_SHIFT = 1.4
 
 # ---------------------------------------------------------------- seção 1
 badge(0.8, 4.4, 1)
@@ -126,8 +137,8 @@ T(1.15, 4.6,
 
 ys = [0, 1, 2]
 colors = [BLUE, BLUE_L, GRID]
-for title, key, ytop, xmax in (("Ingressaram no mestrado", "mestrado", 5.3, 60),
-                               ("Ingressaram no doutorado", "doutorado", 7.45, 60)):
+for title, key, ytop, xmax in (("Ingressaram no mestrado", "mestrado", 5.55, 60),
+                               ("Ingressaram no doutorado", "doutorado", 8.0, 60)):
     T(0.6, ytop, title, size=12, weight="bold")
     a = AX(2.55, ytop + 0.35, 6.7, 1.55)
     vals = UFES[key]
@@ -149,34 +160,34 @@ for title, key, ytop, xmax in (("Ingressaram no mestrado", "mestrado", 5.3, 60),
                    color=INK2)
 
 # aviso de interpretação
-bg.add_patch(FancyBboxPatch((0.6, 9.85), 8.8, 1.2,
-                            boxstyle="round,pad=0,rounding_size=0.08",
-                            facecolor=PANEL, edgecolor="none"))
-bg.add_patch(Rectangle((0.6, 9.85), 0.07, 1.2, color=BLUE))
-T(0.9, 9.98, "Associação, não causa", size=11, weight="bold")
-T(0.9, 10.3,
+add_content_patch(FancyBboxPatch((0.6, 10.4), 8.8, 1.2,
+                                 boxstyle="round,pad=0,rounding_size=0.08",
+                                 facecolor=PANEL, edgecolor="none"))
+T(0.8, 10.53, "Associação, não causa", size=11, weight="bold")
+T(0.8, 10.85,
   "O programa da UFES busca estudantes com bom desempenho, e quem ficou sem IC "
   "pode ter feito pesquisa por outros caminhos. Barras hachuradas mostram o "
   "limite superior informado no estudo (“menos de 10%” e “menos de 2%”). "
   "Bolsistas e voluntários têm as mesmas atividades; o que muda é a bolsa.",
-  size=9.8, color=INK2, wrap=124, ls=1.3)
+  size=9.8, color=INK2, wrap=105, ls=1.3)
 
 # ---------------------------------------------------------------- seção 2
-badge(0.8, 11.65, 2)
-T(1.15, 11.45, "Quem passou por lá diz que fez diferença", size=17, weight="bold")
-T(1.15, 11.85,
+badge(0.8, 12.2, 2)
+T(1.15, 12.0, "Quem passou por lá diz que fez diferença", size=17, weight="bold")
+T(1.15, 12.4,
   f"Egressos de IC da UFSJ que responderam à pesquisa institucional "
   f"(n = {N_UFSJ}; egressos de 2020–21 e 2022–23).",
   size=10.5, color=INK2, wrap=100)
 
-T(0.6, 12.6, f"{hero:.0f}%", size=68, color=BLUE, weight="bold", ls=1.0)
-T(0.6, 13.75,
+# Separate the headline metric from the supporting response breakdown.
+T(0.6, 13.15, f"{hero:.0f}%", size=68, color=BLUE, weight="bold", ls=1.0)
+T(0.6, 14.3,
   "dizem que a IC ajudou no desempenho na graduação, na entrada na pós ou "
   "na admissão no trabalho",
   size=11, color=INK, wrap=30, ls=1.35)
 
-T(3.95, 12.6, "A iniciação contribuiu com…", size=11.5, weight="bold")
-a = AX(6.1, 12.95, 3.3, 2.1)
+T(3.95, 13.15, "A iniciação contribuiu com…", size=11.5, weight="bold")
+a = AX(6.05, 13.5, 3.15, 2.1)
 cats = ["Desempenho na\ngraduação", "Entrada na\npós-graduação",
         "Admissão no\ntrabalho", "Contribuiu\nem parte", "Não influenciou\nou sem resposta"]
 keys = ["desempenho", "pos", "trabalho", "parte", "nao"]
@@ -192,21 +203,29 @@ for i, v in enumerate(vals):
     a.text(v + 1.5, i, f"{br(v)}%", va="center", fontsize=10.5,
            fontweight="bold" if i < 3 else "normal",
            color=INK if i < 3 else INK2)
-T(3.95, 15.4, "Barras azuis: as três respostas que somam o destaque de "
+T(3.95, 16.0, "Barras azuis: as três respostas que somam o destaque de "
   f"{hero:.0f}%. Cinza: demais respostas.", size=9, color=MUTED, wrap=75)
 
 tiles = [(f"{congresso:.0f}%", "apresentaram o trabalho de IC em congresso ou evento"),
          (f"{tcc:.0f}%", "fizeram o TCC a partir do trabalho desenvolvido na IC"),
          (f"{artigo:.0f}%", "já publicaram um artigo com resultados da IC")]
+add_content_patch(FancyBboxPatch((0.6, 16.65), 8.8, 1.55,
+                                 boxstyle="round,pad=0,rounding_size=0.1",
+                                 facecolor=PANEL, edgecolor="none"))
+T(0.85, 16.78, "Outros resultados entre egressos", size=9.5,
+  color=INK2, weight="bold")
+tile_width = 8.8 / len(tiles)
 for i, (num, lab) in enumerate(tiles):
-    x0 = 0.6 + i * 3.0
-    bg.add_patch(FancyBboxPatch((x0, 16.05), 2.8, 1.35,
-                                boxstyle="round,pad=0,rounding_size=0.08",
-                                facecolor=PANEL, edgecolor="none"))
-    T(x0 + 0.2, 16.12, num, size=28, color=BLUE, weight="bold", ls=1.0)
-    T(x0 + 0.2, 16.72, lab, size=9.8, color=INK2, wrap=40, ls=1.25)
+    center = 0.6 + tile_width * (i + 0.5)
+    if i:
+        x_divider = 0.6 + tile_width * i
+        add_content_patch(Rectangle((x_divider, 17.05), 0.012, 0.95, color=GRID))
+    T(center, 16.99, num, size=26, color=BLUE, weight="bold",
+      ha="center", ls=1.0)
+    T(center, 17.48, lab, size=9.8, color=INK2, wrap=40,
+      ha="center", ls=1.25)
 
-T(0.6, 17.6,
+T(0.6, 18.4,
   "Respostas autodeclaradas de cerca de 24% dos egressos; percentuais somados "
   "a partir das contagens do relatório da UFSJ (2020–21: n = 289; 2022–23: "
   "n = 115). Artigos de egressos recentes ainda estão em publicação. Só 7 "
@@ -215,9 +234,9 @@ T(0.6, 17.6,
   size=8.8, color=MUTED, wrap=138, ls=1.3)
 
 # ---------------------------------------------------------------- seção 3 (CTA)
-bg.add_patch(Rectangle((0, 18.7), W, 5.0, color=BLUE_D))
-T(0.6, 19.05, "Seu próximo passo na UNIFEI", size=21, color="white", weight="bold")
-T(0.6, 19.6,
+add_content_patch(Rectangle((0, 19.5), W, 5.0, color=BLUE_D))
+T(0.6, 19.85, "Seu próximo passo na UNIFEI", size=21, color="white", weight="bold")
+T(0.6, 20.4,
   "Iniciação científica ou tecnológica: orientação, prática de pesquisa e "
   "inovação ainda na graduação.",
   size=11.5, color=BLUE_100, wrap=95)
@@ -232,20 +251,20 @@ steps = [
      "Valor de editais PIBITI de 2026; confirme no edital vigente da UNIFEI."),
 ]
 for i, (h, b) in enumerate(steps):
-    yy = 20.25 + i * 0.88
-    bg.add_patch(Circle((0.8, yy + 0.2), 0.2, color="white"))
+    yy = 21.05 + i * 0.88
+    add_content_patch(Circle((0.8, yy + 0.2), 0.2, color="white"))
     T(0.8, yy + 0.2, str(i + 1), size=13, color=BLUE_D, weight="bold",
       ha="center", va="center")
     T(1.2, yy, h, size=12.5, color="white", weight="bold")
     T(1.2, yy + 0.27, b, size=10.3, color=BLUE_100, wrap=92)
-bg.add_patch(Rectangle((0.6, 22.85), 8.8, 0.012, color=BLUE_100))
-T(0.6, 23.0, "Procure um orientador e acompanhe os editais.", size=15,
+add_content_patch(Rectangle((0.6, 23.65), 8.8, 0.012, color=BLUE_100))
+T(0.6, 23.8, "Procure um orientador e acompanhe os editais.", size=15,
   color="white", weight="bold")
-T(9.4, 23.07, "prpi.unifei.edu.br/iniciacao-cientifica", size=10.5,
+T(9.4, 23.87, "prpi.unifei.edu.br/iniciacao-cientifica", size=10.5,
   color=BLUE_100, ha="right")
 
 # ---------------------------------------------------------------- fontes
-T(0.6, 24.1, "Fontes e abrangência dos dados", size=10.5, weight="bold")
+T(0.6, 24.9, "Fontes e abrangência dos dados", size=10.5, weight="bold")
 fontes = [
     "UFES: Salazar AD et al. Iniciação Científica na Universidade Federal do Espírito "
     "Santo: egressos e evolução. Rev. Bras. Pesq. Saúde 22(4):8–14, 2020. "
@@ -261,10 +280,10 @@ fontes = [
     "Os dados da UNIFEI sobre bolsistas (dados.unifei.edu.br) não estavam acessíveis na "
     "elaboração; por isso as evidências vêm de outras universidades federais.",
 ]
-yy = 24.45
+yy = 25.25
 for f in fontes:
     yy = T(0.6, yy, "• " + f, size=8.2, color=INK2, wrap=150, ls=1.28) + 0.06
 
 fig.savefig(os.path.join(OUT, "infografico_iniciacao.png"), dpi=200, facecolor=SURF)
 fig.savefig(os.path.join(OUT, "infografico_iniciacao.pdf"), facecolor=SURF)
-print("fim do conteúdo em y =", round(yy, 2), "de", H)
+print("fim do conteúdo em y =", round(yy - CONTENT_SHIFT, 2), "de", H)
