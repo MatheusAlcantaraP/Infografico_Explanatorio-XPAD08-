@@ -241,7 +241,7 @@ T(0.6, 20.4,
   "inovação ainda na graduação.",
   size=11.5, color=BLUE_100, wrap=95)
 steps = [
-    ("Escolha um tema e procure um professor orientador.",
+    ("Busque projetos da sua área e procure um orientador.",
      "O estudante só entra no programa se for selecionado por um orientador "
      "contemplado em edital da Diretoria de Pesquisa."),
     ("Acompanhe os editais da Diretoria de Pesquisa.",
@@ -264,23 +264,19 @@ T(9.4, 23.87, "prpi.unifei.edu.br/iniciacao-cientifica", size=10.5,
   color=BLUE_100, ha="right")
 
 # ---------------------------------------------------------------- fontes
-T(0.6, 24.9, "Fontes e abrangência dos dados", size=10.5, weight="bold")
+T(0.6, 24.95, "Fontes", size=10.5, weight="bold")
 fontes = [
     "UFES: Salazar AD et al. Iniciação Científica na Universidade Federal do Espírito "
     "Santo: egressos e evolução. Rev. Bras. Pesq. Saúde 22(4):8–14, 2020. "
-    "doi:10.47456/rbps.v22i4.35453. Seção 1: estudantes do edital PIIC 2012/13 "
-    "(612 bolsistas, 441 voluntários) e amostra de 467 estudantes matriculados em 2013/1 sem IC.",
+    "doi:10.47456/rbps.v22i4.35453.",
     "UFSJ: Pró-reitoria de Pesquisa e Pós-graduação. Acompanhamento de egressos do "
-    "Programa de Iniciação Científica (2015–2023), ufsj.edu.br. Seção 2: "
-    "formulários respondidos por 289 egressos (2020–21) e 115 (2022–23); somas calculadas pelo grupo.",
+    "Programa de Iniciação Científica (2015–2023), ufsj.edu.br.",
     "UNIFEI: Diretoria de Pesquisa, páginas Iniciação Científica (prpi.unifei.edu.br) e "
     "Editais de Pesquisa (prpg.unifei.edu.br/editais-de-pesquisa), consultadas em 28/10/2026.",
     "*Valor da bolsa PIBITI/CNPq: Edital PROPPGI 07/2026 (UNILAB) e editais 2025/2026 de "
-    "outras instituições; não é dado da UNIFEI.",
-    "Os dados da UNIFEI sobre bolsistas (dados.unifei.edu.br) não estavam acessíveis na "
-    "elaboração; por isso as evidências vêm de outras universidades federais.",
+    "outras instituições.",
 ]
-yy = 25.25
+yy = 25.22
 for f in fontes:
     yy = T(0.6, yy, "• " + f, size=8.2, color=INK2, wrap=150, ls=1.28) + 0.06
 
